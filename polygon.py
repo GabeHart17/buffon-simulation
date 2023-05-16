@@ -6,7 +6,21 @@ class NormalizedPolygon:
         self.unscaled_perimeter = sum([math.dist(x,y) for x,y in zip(vertices, vertices[1:]+[vertices[0]])])
         scale_factor = 2 * math.pi / self.unscaled_perimeter
         self.vertices = [[j * scale_factor for j in i] for i in self.unscaled_vertices]
-    
+
+    def regular(num_vertices):
+        epsilon = math.pi / num_vertices  # rotate by epsilon to avoid vertical edges
+        vertices = []
+        for i in range(num_vertices):
+            theta = (2 * math.pi * i) / num_vertices + epsilon
+            vertices.append([math.sin(theta), math.cos(theta)])
+        return NormalizedPolygon(vertices)
+
+    def approximate_ellipse(excentricity, num_vertices):
+        thetas = [(2*math.pi*(i+0.5))/num_vertices for i in range(num_vertices)]
+        radii = map(lambda t: 1 / math.sqrt(1 - (eccentricity * math.cos(t))**2), thetas)
+        vertices = [(r * math.cos(t), r * math.sin(t)) for r,t in zip(radii, thetas)]
+        return NormalizedPolygon(vertices)
+
     def line_through_points(a,b):
         b0 = (b[1]-a[1])/(b[0]-a[0])
         b1 = a[1] - slope * a[0]
