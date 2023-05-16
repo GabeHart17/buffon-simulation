@@ -13,4 +13,3 @@ def buffon_probability(polygon, needle_size, num_trials):
     for i in range(num_trials):
         successes += buffon_trial(polygon, needle_size)[0]
     return successes / num_trials
-

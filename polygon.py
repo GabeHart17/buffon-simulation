@@ -1,4 +1,5 @@
 import random
+import math
 
 class NormalizedPolygon:
     def __init__(self, vertices):
@@ -15,7 +16,7 @@ class NormalizedPolygon:
             vertices.append([math.sin(theta), math.cos(theta)])
         return NormalizedPolygon(vertices)
 
-    def approximate_ellipse(excentricity, num_vertices):
+    def approximate_ellipse(eccentricity, num_vertices):
         thetas = [(2*math.pi*(i+0.5))/num_vertices for i in range(num_vertices)]
         radii = map(lambda t: 1 / math.sqrt(1 - (eccentricity * math.cos(t))**2), thetas)
         vertices = [(r * math.cos(t), r * math.sin(t)) for r,t in zip(radii, thetas)]
@@ -35,7 +36,7 @@ class NormalizedPolygon:
             if (p[1]-f(p[0]))*(c[1]-f(c[0])) < 0:  # if sign is positive, then on same side of line
                 return False
         return True
-    
+
     def triangle_sample(vertices):
        a = vertices[0]
        b = (vertices[1][0] - a[0], vertices[1][1] - a[1])
@@ -56,7 +57,7 @@ class NormalizedPolygon:
             if triangle_contains([a,b],p):
                 return True
         return False
-    
+
     def sample(self):
         triangle_areas = []
         a = self.vertices[0]
@@ -72,4 +73,3 @@ class NormalizedPolygon:
             idx += 1
             acc += triangle_areas[idx]
         return triangle_sample([a, self.vertices[idx+1], self.vertices[idx+2]])
-
