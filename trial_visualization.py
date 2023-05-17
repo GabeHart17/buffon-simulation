@@ -27,4 +27,5 @@ for line in needle_lines:
     ax.add_line(line)
 ax.set_xlim(-max_extent, max_extent)
 ax.set_ylim(-max_extent, max_extent)
+ax.set_aspect('equal', 'box')
 plt.show()
