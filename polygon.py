@@ -9,15 +9,14 @@ class NormalizedPolygon:
         self.vertices = [[j * scale_factor for j in i] for i in self.unscaled_vertices]
 
     def regular(num_vertices):
-        epsilon = math.pi / num_vertices  # rotate by epsilon to avoid vertical edges
         vertices = []
         for i in range(num_vertices):
-            theta = (2 * math.pi * i) / num_vertices + epsilon
+            theta = (2 * math.pi * i) / num_vertices
             vertices.append([math.sin(theta), math.cos(theta)])
         return NormalizedPolygon(vertices)
 
     def approximate_ellipse(eccentricity, num_vertices):
-        thetas = [(2*math.pi*(i+0.5))/num_vertices for i in range(num_vertices)]
+        thetas = [(2*math.pi*i)/num_vertices for i in range(num_vertices)]
         radii = map(lambda t: 1 / math.sqrt(1 - (eccentricity * math.cos(t))**2), thetas)
         vertices = [(r * math.cos(t), r * math.sin(t)) for r,t in zip(radii, thetas)]
         return NormalizedPolygon(vertices)
