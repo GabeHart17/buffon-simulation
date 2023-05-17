@@ -47,7 +47,6 @@ class NormalizedPolygon:
        x = random.uniform(0, 1)
        y = random.uniform(0, 1)
        p = (x*b[0] + y*c[0], x*b[1] + y*c[1])  # random point in parallelogram
-       # f = NormalizedPolygon.line_through_points(b,c)
        if NormalizedPolygon.triangle_contains([(0,0),b,c], p):
            # point is in the triangle
            return (p[0] + a[0], p[1] + a[1])
