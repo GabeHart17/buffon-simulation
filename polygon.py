@@ -23,18 +23,22 @@ class NormalizedPolygon:
         return NormalizedPolygon(vertices)
 
     def line_through_points(a,b):
-        b0 = (b[1]-a[1])/(b[0]-a[0])
-        b1 = a[1] - slope * a[0]
-        return lambda x: b0 + (b1 * x)
+        m = (b[1]-a[1])/(b[0]-a[0])
+        b = a[1] - m * a[0]
+        return lambda x: b + (m * x)
 
     def triangle_contains(vertices, p):
         for i in range(3):
-            a = vertices[i-1]
-            b = vertices[i]
-            c = vertices[i+1]
-            f = line_through_points(a, b)
-            if (p[1]-f(p[0]))*(c[1]-f(c[0])) < 0:  # if sign is positive, then on same side of line
-                return False
+            a = vertices[i-2]
+            b = vertices[i-1]
+            c = vertices[i]
+            if a[0] == b[0]:  # case where triangle has vertical side, avoid zero division
+                if (p[0] - a[0]) * (c[0] - a[0]) < 0:
+                    return False
+            else:
+                f = NormalizedPolygon.line_through_points(a, b)
+                if (p[1]-f(p[0]))*(c[1]-f(c[0])) < 0:  # if sign is positive, then on same side of line
+                    return False
         return True
 
     def triangle_sample(vertices):
@@ -44,8 +48,8 @@ class NormalizedPolygon:
        x = random.uniform(0, 1)
        y = random.uniform(0, 1)
        p = (x*b[0] + y*c[0], x*b[1] + y*c[1])  # random point in parallelogram
-       f = line_through_points(b,c)
-       if (f(p[0]) - p[1]) * f(0) > 1:
+       # f = NormalizedPolygon.line_through_points(b,c)
+       if NormalizedPolygon.triangle_contains([(0,0),b,c], p):
            # point is in the triangle
            return (p[0] + a[0], p[1] + a[1])
        # point is in similar triangle forming other part of parallelogram
@@ -54,7 +58,7 @@ class NormalizedPolygon:
 
     def contains(self, p):  # p is coordinate pair
         for a,b in zip(self.vertices[1:-1], self.vertices[2:]):
-            if triangle_contains([a,b],p):
+            if NormalizedPolygon.triangle_contains([a,b,self.vertices[0]],p):
                 return True
         return False
 
@@ -65,11 +69,11 @@ class NormalizedPolygon:
             nb = (b[0]-a[0], b[1]-a[1])  # translate st. a is at origin
             nc = (c[0]-a[0], c[1]-a[1])
             det = nb[0]*nc[1] - nb[1]*nc[0]
-            triangle_areas.append(math.abs(det))
+            triangle_areas.append(abs(det))
         r = random.uniform(0, sum(triangle_areas))
         acc = triangle_areas[0]
         idx = 0
-        while triangle_areas < r:
+        while acc < r:
             idx += 1
             acc += triangle_areas[idx]
-        return triangle_sample([a, self.vertices[idx+1], self.vertices[idx+2]])
+        return NormalizedPolygon.triangle_sample([a, self.vertices[idx+1], self.vertices[idx+2]])
