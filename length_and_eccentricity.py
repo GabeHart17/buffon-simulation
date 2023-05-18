@@ -18,11 +18,13 @@ NUM_TRIALS = 1000
 lengths, eccentricities = np.meshgrid(np.arange(MIN_LENGTH, MAX_LENGTH, LENGTH_INC), np.arange(MIN_ECCENTRICITY, MAX_ECCENTRICITY, ECCENTRICITY_INC))
 probabilities = []
 
-for i in range(len(eccentricities)):
-    ellipse = NormalizedPolygon.approximate_ellipse(eccentricities[i][0], ELLIPSE_SIDES)
-    probabilities.append([])
-    for j in range(len(lengths[0])):
-        probabilities[-1].append(buffon_probability(ellipse, lengths[0][j], NUM_TRIALS))
+# for i in range(len(eccentricities)):
+#     ellipse = NormalizedPolygon.approximate_ellipse(eccentricities[i][0], ELLIPSE_SIDES)
+#     probabilities.append([])
+#     for j in range(len(lengths[0])):
+#         probabilities[-1].append(buffon_probability(ellipse, lengths[0][j], NUM_TRIALS))
+
+probabilities = [[buffon_probability(ellipse, lengths[0,j], NUM_TRIALS) for j in range(len(lengths[0]))] for ellipse in [NormalizedPolygon.approximate_ellipse(eccentricities[i][0], ELLIPSE_SIDES) for i in range(len(eccentricities))]]
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
