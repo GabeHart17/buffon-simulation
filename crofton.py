@@ -37,11 +37,11 @@ class CroftonEstimator:
 
 if __name__ == '__main__':
     # curve = [((0,-0.5),(0,0.5))]
-    circle_poly = NormalizedPolygon.approximate_ellipse(0, 100)
+    circle_poly = NormalizedPolygon.approximate_ellipse(0.2, 100)
     shifted_vertices = circle_poly.vertices[1:] + [circle_poly.vertices[0]]
     curve = list(zip(circle_poly.vertices, shifted_vertices))
-    bounds = [-1, 1, -1, 1]
-    length = 1
+    bounds = [-10, 10, -10, 10]
+    length = 0.1
     estimator = CroftonEstimator(curve, bounds, length)
     ms = {}
     n_samples = 100000
@@ -51,9 +51,13 @@ if __name__ == '__main__':
             ms[n] = 1
         else:
             ms[n] += 1
+    crofton_integral = 0
     for key in sorted(ms.keys()):
-        print(key, (ms[key] / n_samples) * ((bounds[1] - bounds[0]) * (bounds[3] - bounds[2]) * 2 * math.pi))
-    length = 0
+        m = (ms[key] / n_samples) * (bounds[1] - bounds[0]) * (bounds[3]-bounds[2]) * 2 * math.pi
+        crofton_integral += key * m
+        print(key, m)
+    A_len = 0
     for a,b in curve:
-        length += math.sqrt((a[0] - b[0])**2 + (a[1]-b[1])**2)
-    print(length)
+        A_len += math.sqrt((a[0] - b[0])**2 + (a[1]-b[1])**2)
+    print(A_len)
+    print(crofton_integral / (2 * length))

@@ -13,3 +13,7 @@ def buffon_probability(polygon, needle_size, num_trials):
     for i in range(num_trials):
         successes += buffon_trial(polygon, needle_size)[0]
     return successes / num_trials
+
+if __name__ == '__main__':
+    poly = NormalizedPolygon.regular(4)
+    print(buffon_probability(poly, 0.1, 500000))
